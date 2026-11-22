@@ -1,0 +1,37 @@
+* { box-sizing: border-box; }
+:root { font-family: "Segoe UI", Arial, sans-serif; color: #15364a; background: #f4f8f8; line-height: 1.5; }
+body { margin: 0; }
+header { background: white; border-bottom: 1px solid #cdddda; }
+.bar, main { max-width: 64rem; margin: auto; padding: 1.1rem clamp(1rem, 4vw, 3rem); }
+main { padding-top: clamp(2rem, 6vw, 5rem); padding-bottom: 4rem; }
+.bar, .row, .account, summary { display: flex; justify-content: space-between; align-items: center; gap: 1rem; flex-wrap: wrap; }
+.brand { font-weight: 700; text-decoration: none; color: inherit; }
+a { color: #09675e; }
+h1 { font-size: clamp(2.2rem, 5vw, 3.6rem); line-height: 1.1; letter-spacing: -.04em; margin: .5rem 0 1.5rem; }
+h2 { font-size: 1.4rem; margin: 0 0 1rem; }
+.overline { font-weight: 650; color: #146b61; margin: 0; }
+.auth { display: grid; grid-template-columns: 1fr 1fr; gap: clamp(2rem, 7vw, 6rem); align-items: start; }
+.intro { border-top: .25rem solid #188073; padding-top: 1.4rem; }
+.card, .empty, .ticket { background: white; border: 1px solid #cedbd9; border-radius: .9rem; padding: clamp(1.2rem, 3vw, 2rem); }
+.empty, .ticket { margin-top: 1rem; }
+.fields, label { display: grid; gap: .4rem; }
+.fields { gap: 1rem; }
+label { font-weight: 600; }
+input, select, textarea { min-width: 0; width: 100%; padding: .7rem; border: 1px solid #869c9a; border-radius: .4rem; font: inherit; background: #fff; color: inherit; }
+textarea { resize: vertical; }
+button, .button { border: 0; background: #116a60; color: white; border-radius: .45rem; padding: .7rem 1.3rem; font: inherit; font-weight: 650; cursor: pointer; text-decoration: none; }
+:focus-visible { outline: 3px solid #326fb2; outline-offset: 2px; }
+.quiet { background: #e4f0ed; color: #125a51; }
+.switch { display: inline-block; margin-top: 1.2rem; }
+.error, .notice { padding: .8rem; border-radius: .4rem; }
+.error { background: #ffeded; color: #8f2323; }
+.notice, .status { background: #e2f3ec; color: #165b48; }
+.ticket { padding: 1.1rem; }
+summary { cursor: pointer; }
+summary strong { display: block; }
+.status { border-radius: 2rem; padding: .25rem .8rem; }
+.pair { display: grid; gap: 1rem; grid-template-columns: repeat(2,minmax(0,1fr)); }
+.account, .ticket, dd { overflow-wrap: anywhere; }
+dt { font-weight: 650; }
+dd { margin: 0 0 .8rem; white-space: pre-wrap; }
+@media (max-width: 42rem) { .auth, .pair { grid-template-columns: 1fr; } }

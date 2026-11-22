@@ -3,18 +3,11 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>Единая служба ИТ-поддержки · Центр образования «Приоритет»</title>
-  <style>
-    body { margin: 0; color: #15364a; background: #f4f8f8; font: 1rem/1.6 Arial, sans-serif; }
-    main { max-width: 44rem; margin: 12vh auto; padding: 1rem 2rem; border-top: 4px solid #18796f; }
-    h1 { margin: 1.5rem 0 1rem; font-size: clamp(2rem, 6vw, 3.5rem); line-height: 1.1; }
-  </style>
+  <title>{{title}} · Единая служба ИТ-поддержки</title>
+  <link rel="stylesheet" href="/style.css">
 </head>
 <body>
-  <main>
-    <p>Центр образования «Приоритет»</p>
-    <h1>Единая служба ИТ-поддержки</h1>
-    <p>Локальная версия для разработки. Приём заявок откроется после запуска личных кабинетов.</p>
-  </main>
+  <header><div class="bar"><a class="brand" href="/">Центр образования «Приоритет»</a>{{account}}</div></header>
+  <main>{{content}}</main>
 </body>
 </html>
