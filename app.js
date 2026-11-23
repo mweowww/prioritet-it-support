@@ -6,6 +6,12 @@ import { authPage, dashboard, ticketPage } from './views.js';
 
 import { showQueue, ticketWorkflow, queueRevision } from './workflow.js';
 
+const configuredOrigin = process.env.PUBLIC_ORIGIN || process.env.RENDER_EXTERNAL_URL;
+export const publicOrigin = configuredOrigin ? new URL(configuredOrigin) : null;
+if (publicOrigin && (publicOrigin.protocol !== 'https:' || publicOrigin.href !== publicOrigin.origin + '/')) {
+  throw new Error('PUBLIC_ORIGIN должен содержать только HTTPS-адрес сайта.');
+}
+const sessionFlags = 'Path=/; HttpOnly; SameSite=Lax' + (publicOrigin ? '; Secure' : '');
 const deriveKey = promisify(scrypt);
 const css = await readFile(new URL('./public/style.css', import.meta.url));
 const queueScript = await readFile(new URL('./public/queue.js', import.meta.url));
@@ -45,9 +51,10 @@ async function handle(req, res) {
   res.setHeader('Content-Security-Policy', "default-src 'self'; form-action 'self'; frame-ancestors 'none'; base-uri 'none'");
   const port = req.socket.localPort;
   const host = req.headers.host;
-  if (![`127.0.0.1:${port}`, `localhost:${port}`].includes(host)) return send(403, 'Адрес недоступен');
+  const allowedHosts = publicOrigin ? [publicOrigin.host] : [`127.0.0.1:${port}`, `localhost:${port}`];
+  if (!allowedHosts.includes(host)) return send(403, 'Адрес недоступен');
   const post = req.method === 'POST';
-  if (post && req.headers.origin !== `http://${host}`) return send(403, 'Обновите страницу и повторите отправку.');
+  if (post && req.headers.origin !== (publicOrigin?.origin ?? `http://${host}`)) return send(403, 'Обновите страницу и повторите отправку.');
   if (!post && !['GET', 'HEAD'].includes(req.method)) return send(405, 'Метод недоступен');
   if (!post && path === '/style.css') return send(200, css, 'text/css; charset=utf-8');
   if (!post && path === '/queue.js') return send(200,queueScript,'text/javascript; charset=utf-8');
@@ -79,7 +86,7 @@ async function handle(req, res) {
   if (!form) return send(400, 'Не удалось прочитать форму.');
   if (path === '/logout') {
     if (key) await db.query('DELETE FROM sessions WHERE token_hash=$1', [digest(key)]);
-    res.setHeader('Set-Cookie', 'session=; Path=/; HttpOnly; SameSite=Strict; Max-Age=0');
+    res.setHeader('Set-Cookie', `session=; ${sessionFlags}; Max-Age=0`);
     return redirect('/');
   }
   if (path === '/tickets') {
@@ -118,7 +125,7 @@ async function handle(req, res) {
   }
   const token = randomBytes(32).toString('hex');
   await db.query("INSERT INTO sessions(token_hash,staff_id,expires_at) VALUES($1,$2,now()+interval '8 hours')",[digest(token),id]);
-  res.setHeader('Set-Cookie', `session=${token}; Path=/; HttpOnly; SameSite=Strict; Max-Age=28800`);
+  res.setHeader('Set-Cookie', `session=${token}; ${sessionFlags}; Max-Age=28800`);
   redirect('/');
 }
 
