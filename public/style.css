@@ -35,3 +35,16 @@ summary strong { display: block; }
 dt { font-weight: 650; }
 dd { margin: 0 0 .8rem; white-space: pre-wrap; }
 @media (max-width: 42rem) { .auth, .pair { grid-template-columns: 1fr; } }
+
+.filter-grid { display: grid; gap: 1rem; grid-template-columns: repeat(auto-fit, minmax(min(12rem, 100%), 1fr)); }
+.ticket h2 { margin: .5rem 0; }
+.ticket p { margin-bottom: 0; }
+.subject { font-size: clamp(1.8rem, 4vw, 3rem); overflow-wrap: anywhere; }
+.badges { display: flex; flex-wrap: wrap; align-items: center; gap: .5rem; }
+.priority, .private { padding: .2rem .65rem; border-radius: .4rem; background: #e9eef2; color: #324859; }
+.level-2 { background: #fff0cf; color: #754100; }
+.level-3, .late { background: #ffe3df; color: #8a251b; }
+.conversation { margin-top: 1rem; }
+.conversation ol { list-style: none; padding: 0; }
+.conversation li { border-bottom: 1px solid #cdddda; padding: .7rem 0; overflow-wrap: anywhere; }
+.conversation li p { white-space: pre-wrap; }

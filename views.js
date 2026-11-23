@@ -5,10 +5,10 @@ export const categories = ['Компьютерная техника', 'Оргт�
 export const priorities = ['Низкий', 'Средний', 'Высокий', 'Критический'];
 const locations = ['Библиотека', 'Актовый зал', 'Административный корпус'];
 const escapes = { '&':'&amp;', '<':'&lt;', '>':'&gt;', '"':'&quot;', "'":'&#39;' };
-const esc = value => String(value ?? '').replace(/[&<>"']/g, char => escapes[char]);
+export const esc = value => String(value ?? '').replace(/[&<>"']/g, char => escapes[char]);
 const errorText = message => message ? `<p class="error" role="alert">${esc(message)}</p>` : '';
 const page = await readFile(new URL('./public/index.html', import.meta.url), 'utf8');
-function layout(title, content, user) {
+export function layout(title, content, user) {
   const account = user ? `<form class="account" method="post" action="/logout"><span>${esc(user.login)}</span><button class="quiet">Выйти</button></form>` : '';
   const slots = { title: esc(title), content, account };
   return page.replace(/{{(title|account|content)}}/g, (_, name) => slots[name]);
@@ -16,7 +16,7 @@ function layout(title, content, user) {
 
 export function authPage(register, message = '', login = '') {
   const title = register ? 'Регистрация педагога' : 'Вход в кабинет';
-  return layout(title, `<div class="auth"><div class="intro"><p class="overline">Служба ИТ-поддержки</p><h1>Кабинет педагога</h1><p>Сообщите о неполадке и следите за статусом своих заявок.</p></div>
+  return layout(title, `<div class="auth"><div class="intro"><p class="overline">Служба ИТ-поддержки</p><h1>Единая служба ИТ-поддержки</h1><p>Войдите, чтобы подать заявку или продолжить работу с обращениями.</p></div>
   <section class="card"><h2>${title}</h2>${errorText(message)}
   <form class="fields" method="post" action="${register ? '/register' : '/login'}">
   <label>Рабочая почта или телефон<input name="login" autocomplete="username" maxlength="254" required value="${esc(login)}"></label>
@@ -29,7 +29,7 @@ export function authPage(register, message = '', login = '') {
 export function dashboard(user, tickets, created) {
   const cards = tickets.map(t => `<details class="ticket"><summary><span><small>№ ${t.id} · ${esc(t.category)}</small><strong>${esc(t.subject)}</strong></span><span class="status">${esc(t.status)}</span></summary><dl>
     <dt>Приоритет</dt><dd>${esc(t.priority)}</dd><dt>Подразделение</dt><dd>${esc(t.department)}</dd>
-    <dt>Место</dt><dd>${esc(t.location)}</dd><dt>Описание</dt><dd>${esc(t.description)}</dd></dl></details>`).join('');
+    <dt>Место</dt><dd>${esc(t.location)}</dd><dt>Описание</dt><dd>${esc(t.description)}</dd></dl><a href="/tickets/${t.id}">Открыть переписку</a></details>`).join('');
   return layout('Мои заявки', `<p class="overline">Кабинет педагога</p><div class="row"><h1>Мои заявки</h1><a class="button" href="/tickets/new">Подать заявку</a></div>
     ${created && tickets.some(t => String(t.id) === created) ? `<p role="status" class="notice">Заявка № ${esc(created)} зарегистрирована.</p>` : ''}
     ${cards || '<section class="empty"><h2>Вы ещё не подавали заявок</h2><p>Когда вы отправите первое обращение, здесь появятся его номер и статус.</p></section>'}`,user);
