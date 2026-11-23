@@ -1,8 +1,8 @@
 import { readFile } from 'node:fs/promises';
 import { createHash, randomBytes, scrypt, timingSafeEqual } from 'node:crypto';
 import { promisify } from 'node:util';
-import { db, initialize } from './db.js';
-import { authPage, dashboard, ticketPage, categories, priorities } from './views.js';
+import { db, initialize, catalogs } from './db.js';
+import { authPage, dashboard, ticketPage } from './views.js';
 
 import { showQueue, ticketWorkflow, queueRevision } from './workflow.js';
 
@@ -73,7 +73,7 @@ async function handle(req, res) {
   }
   if (user?.role === 'technician' && ['/tickets','/tickets/new'].includes(path)) return redirect('/');
   if (!post && path === '/register') return user ? redirect('/') : send(200, authPage(true));
-  if (!post && path === '/tickets/new') return user ? send(200, ticketPage(user)) : redirect('/');
+  if (!post && path === '/tickets/new') return user ? send(200, ticketPage(user, await catalogs())) : redirect('/');
   if (!post || !['/register','/login','/logout','/tickets'].includes(path)) return send(404, 'Страница не найдена');
   const form = await fields(req);
   if (!form) return send(400, 'Не удалось прочитать форму.');
@@ -84,10 +84,11 @@ async function handle(req, res) {
   }
   if (path === '/tickets') {
     if (!user) return redirect('/');
+    const lists = await catalogs();
     const limits = { subject:150, department:100, location:100, description:4000 };
     const invalid = Object.entries(limits).some(([field, max]) => !form[field]?.trim() || form[field].length > max);
-    if (invalid || !categories.includes(form.category) || !priorities.includes(form.priority) || !/^[\da-f]{8}(-[\da-f]{4}){3}-[\da-f]{12}$/i.test(form.form_id || '')) {
-      return send(422, ticketPage(user, form, 'Проверьте поля заявки и выберите категорию и приоритет.'));
+    if (invalid || !lists.categories.includes(form.category) || !lists.priorities.includes(form.priority) || !/^[\da-f]{8}(-[\da-f]{4}){3}-[\da-f]{12}$/i.test(form.form_id || '')) {
+      return send(422, ticketPage(user, lists, form, 'Проверьте поля заявки и выберите категорию и приоритет.'));
     }
     const values = [user.id, form.form_id, form.subject.trim(), form.category, form.department.trim(), form.location.trim(), form.priority, form.description.trim()];
     const result = await db.query(`INSERT INTO tickets (staff_id,form_id,subject,category,department,location,priority,description)

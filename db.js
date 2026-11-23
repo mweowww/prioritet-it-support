@@ -12,8 +12,10 @@ if (!connectionString) {
 }
 export const db = new Pool({ connectionString, connectionTimeoutMillis: 5000 });
 export async function initialize() {
-  await db.query(`
-    BEGIN;
+  const client = await db.connect();
+  try {
+    await client.query('BEGIN');
+    await client.query(`
     SELECT pg_advisory_xact_lock(681714);
     CREATE TABLE IF NOT EXISTS staff (
       id integer GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
@@ -51,6 +53,32 @@ export async function initialize() {
       created_at timestamptz NOT NULL DEFAULT now()
     );
     CREATE INDEX IF NOT EXISTS ticket_comments_ticket_idx ON ticket_comments(ticket_id, id);
-    COMMIT;
-  `);
+    CREATE TABLE IF NOT EXISTS schema_migrations (
+      version integer PRIMARY KEY,
+      applied_at timestamptz NOT NULL DEFAULT now()
+    );
+    `);
+    const migration = await client.query('SELECT version FROM schema_migrations WHERE version=1');
+    if (!migration.rowCount) {
+      const sql = readFileSync(new URL('./sql/001-catalogs-history.sql', import.meta.url), 'utf8');
+      await client.query(sql);
+      await client.query('INSERT INTO schema_migrations(version) VALUES (1)');
+    }
+    await client.query('COMMIT');
+  } catch (error) {
+    await client.query('ROLLBACK');
+    throw error;
+  } finally {
+    client.release();
+  }
+}
+
+export async function catalogs() {
+  const { rows } = await db.query(`SELECT
+    ARRAY(SELECT name FROM categories ORDER BY sort_order,name) AS categories,
+    ARRAY(SELECT name FROM priorities ORDER BY sort_order,name) AS priorities,
+    ARRAY(SELECT name FROM statuses ORDER BY sort_order,name) AS statuses,
+    ARRAY(SELECT name FROM departments ORDER BY sort_order,name) AS departments,
+    ARRAY(SELECT name FROM locations ORDER BY sort_order,name) AS locations`);
+  return rows[0];
 }

@@ -48,3 +48,80 @@ dd { margin: 0 0 .8rem; white-space: pre-wrap; }
 .conversation ol { list-style: none; padding: 0; }
 .conversation li { border-bottom: 1px solid #cdddda; padding: .7rem 0; overflow-wrap: anywhere; }
 .conversation li p { white-space: pre-wrap; }
+
+/* Общая палитра кабинетов */
+:root {
+  color: #183941;
+  background: #f3f6f4;
+  --ink: #143d43;
+  --teal: #066960;
+  --line: #d4e0db;
+}
+body { min-height: 100vh; background: linear-gradient(135deg, #eaf2ef 0%, transparent 42%); }
+header { border-top: 4px solid var(--teal); }
+.bar, main { max-width: 72rem; }
+.bar { min-height: 4.6rem; padding-block: .75rem; }
+.brand { display: inline-flex; align-items: center; gap: .75rem; font-size: 1.25rem; line-height: 1.15; }
+.brand small { display: block; font-size: .8rem; font-weight: 500; color: #506766; }
+.brand-symbol { position: relative; width: 2.55rem; height: 2.55rem; border-radius: .7rem; background: var(--ink); overflow: hidden; }
+.brand-symbol::before, .brand-symbol::after { content: ""; position: absolute; width: .43rem; height: 1.4rem; transform: skew(-24deg); top: .6rem; left: .85rem; background: #a3dbcb; }
+.brand-symbol::after { left: 1.45rem; height: 1rem; background: #eac778; }
+main { padding-top: clamp(2rem, 4vw, 3.8rem); }
+h1, h2 { color: var(--ink); }
+h1 { font-size: clamp(2.1rem, 4.8vw, 3.3rem); }
+.overline { display: flex; align-items: center; gap: .55rem; font-size: .94rem; }
+.overline::before { content: ""; width: 1.55rem; height: 3px; background: #bc8f35; }
+.auth { background: white; border: 1px solid var(--line); border-radius: 1.25rem; overflow: hidden; align-items: stretch; gap: 0; grid-template-columns: 1.08fr 1fr; box-shadow: 0 1rem 3rem #173e390b; }
+.intro {
+  position: relative; isolation: isolate; overflow: hidden; border: 0;
+  padding: clamp(2rem,4vw,3.8rem); min-height: 25rem; color: #daede6;
+  background: linear-gradient(135deg,#123c42,#155851);
+}
+.intro h1 { color: white; margin: 0 0 1rem; font-size: clamp(2.2rem,4.3vw,3.6rem); }
+.intro p { max-width: 27rem; }
+.intro::after { content: ""; position: absolute; z-index: -1; pointer-events: none; right: -7rem; bottom: -13rem; border-radius: 50%; width: 25rem; height: 25rem; background: repeating-radial-gradient(circle, transparent 0 14px, #a7dbcc55 15px 16px, transparent 17px 21px); }
+.auth .card { border: 0; box-shadow: none; padding: clamp(1.5rem,4vw,3.6rem); }
+.auth h2, .facts h2, .conversation h2 { letter-spacing: -.025em; }
+.card, .empty, .ticket { border-color: var(--line); box-shadow: 0 4px 18px #173e3906; }
+.card, .empty { border-radius: 1rem; }
+.ticket { border-left: 4px solid #85b9a9; padding-inline: clamp(1rem,3vw,1.7rem); }
+.ticket small, .timeline small { color: #4c6565; }
+.ticket h2 a { color: var(--ink); text-decoration-thickness: 1px; text-underline-offset: .18em; }
+.ticket summary { position: relative; padding-right: 1.6rem; }
+.ticket summary::after, .timeline summary::after { content: "+"; font-size: 1.4rem; color: var(--teal); }
+.ticket summary::after { position: absolute; right: 0; }
+.ticket[open] summary::after, .timeline[open] summary::after { content: "−"; }
+button, .button { background: var(--teal); transition: background .15s; }
+button:hover, .button:hover { background: #104840; }
+.quiet { color: var(--ink); background: #e6efea; }
+.quiet:hover { background: #d4e2db; }
+input, select, textarea { border-color: #9aafaa; border-radius: .55rem; padding: .75rem .8rem; }
+.status { font-weight: 650; font-size: .92rem; }
+.status[data-status="Новая"] { background: #e6edf8; color: #335481; }
+.status[data-status="Ожидает"] { background: #fff0cf; color: #765012; }
+.status[data-status="Отклонена"] { background: #f3e6e6; color: #874342; }
+.facts dl { margin-bottom: 0; display: grid; grid-template-columns: minmax(9rem, 1fr) 3fr; gap: .55rem 1rem; }
+.facts dt { color: #506866; }
+.facts dd { margin: 0; }
+.timeline { margin-top: 1rem; }
+.timeline summary { justify-content: flex-start; font-weight: 650; }
+.timeline summary span { color: var(--teal); }
+.timeline summary::after { margin-left: auto; }
+.timeline ol { padding: 0 0 0 1.25rem; margin-bottom: 0; }
+.timeline li { padding-left: .5rem; }
+.timeline small { display: block; overflow-wrap: anywhere; }
+.timeline p { margin: .25rem 0 1rem; overflow-wrap: anywhere; }
+.conversation li { background: #f3f8f5; padding: 1rem; margin-bottom: .5rem; border: 0; border-radius: .55rem; }
+.conversation .note-internal { background: #faf3e5; border-left: 3px solid #c69848; }
+.private { background: #f3e3c6; color: #674410; }
+.conversation li p { margin-bottom: 0; }
+@media (max-width: 44rem) {
+  .auth { grid-template-columns: 1fr; }
+  .intro { min-height: 0; padding: 1.5rem; }
+  .intro h1 { font-size: 2.25rem; }
+  .intro p { margin-bottom: 0; }
+  .intro::after { opacity: .4; right: -15rem; }
+  .account { font-size: .9rem; min-width: 0; }
+  .facts dl { display: block; }
+  .facts dd { margin-bottom: .8rem; }
+}

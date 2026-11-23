@@ -1,6 +1,5 @@
-import { db } from './db.js';
-import { priorities } from './views.js';
-import { queuePage, detailPage, statuses } from './work-views.js';
+import { db, catalogs } from './db.js';
+import { queuePage, detailPage } from './work-views.js';
 
 const technicians = async () => (await db.query("SELECT id,login FROM staff WHERE role='technician' ORDER BY login")).rows;
 const ticketSource = `FROM tickets t JOIN staff author ON author.id=t.staff_id
@@ -20,25 +19,30 @@ export async function showQueue(user, params) {
       AND strpos(lower(t.location),lower($4))>0 AND strpos(lower(author.login),lower($5))>0
       AND strpos(lower(concat_ws(' ',t.id,t.subject,t.description)),lower($6))>0
     ORDER BY t.id DESC`, Object.values(filter));
-  return queuePage(user,result.rows,filter,revision);
+  return queuePage(user,result.rows,filter,revision,await catalogs());
 }
 
 export async function ticketWorkflow({id, user, post, form, send, redirect}) {
   const tech = user.role === 'technician';
+  const lists = await catalogs();
   async function show(code = 200, message = '') {
     const {rows} = await db.query(`SELECT ${ticketFields} ${ticketSource}
       WHERE t.id=$1 AND ($2 OR t.staff_id=$3)`, [id,tech,user.id]);
     if (!rows.length) return send(404,'Заявка не найдена');
     const notes = await db.query(`SELECT c.body,c.internal,c.created_at,s.login FROM ticket_comments c
       JOIN staff s ON s.id=c.author_id WHERE c.ticket_id=$1 AND ($2 OR NOT c.internal) ORDER BY c.id`,[id,tech]);
-    return send(code,detailPage(user,rows[0],notes.rows,tech ? await technicians() : [],message));
+    const history = await db.query(`SELECT h.event_type,h.status,h.priority,h.recorded_at,
+      actor.login AS actor, assignee.login AS assignee FROM ticket_history h
+      LEFT JOIN staff actor ON actor.id=h.actor_id LEFT JOIN staff assignee ON assignee.id=h.assignee_id
+      WHERE h.ticket_id=$1 ORDER BY h.id`,[id]);
+    return send(code,detailPage(user,rows[0],notes.rows,tech ? await technicians() : [],message,lists,history.rows));
   }
   if (!post) return show();
   const comment=(form.comment || '').trim();
   const internal=(form.internal || '').trim();
   if (!tech && ['internal','status','assignee','priority'].some(k=>Object.hasOwn(form,k))) return send(403,'Недостаточно прав');
   if (comment.length>4000 || internal.length>4000 || (!tech && !comment)) return show(422,'Проверьте текст сообщения.');
-  if (tech && (!statuses.includes(form.status) || !priorities.includes(form.priority))) return show(422,'Выберите статус и приоритет из списка.');
+  if (tech && (!lists.statuses.includes(form.status) || !lists.priorities.includes(form.priority))) return show(422,'Выберите статус и приоритет из списка.');
   const assignee = form.assignee || null;
   if (assignee && !/^[1-9]\d{0,8}$/.test(assignee)) return show(422,'Проверьте исполнителя.');
   const client=await db.connect();
@@ -53,6 +57,7 @@ export async function ticketWorkflow({id, user, post, form, send, redirect}) {
         if (assignee && !(await client.query("SELECT id FROM staff WHERE id=$1 AND role='technician'",[assignee])).rowCount) {
           await client.query('ROLLBACK'); return send(422,'Указанный исполнитель недоступен');
         }
+        await client.query("SELECT set_config('prioritet.actor_id',$1,true)",[String(user.id)]);
         await client.query('UPDATE tickets SET status=$2, priority=$3, assignee_id=$4 WHERE id=$1',[id,form.status,form.priority,assignee]);
       }
       for (const [body,hidden] of [[comment,false],[internal,true]]) {
