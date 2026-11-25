@@ -1,0 +1,78 @@
+* { box-sizing: border-box; }
+:root {
+  color-scheme: light;
+  --ink: #2c2134;
+  --muted: #655d6a;
+  --purple: #693692;
+  --plum: #372047;
+  --orange: #ff8357;
+  --line: #e0dbe4;
+  --paper: #faf8f6;
+  font: 100%/1.55 "Segoe UI", system-ui, sans-serif;
+  color: var(--ink);
+  background: var(--paper);
+}
+body { margin: 0; min-height: 100vh; }
+header { background: #fff; border-bottom: 1px solid var(--line); }
+main, .bar { width: min(100%, 78rem); margin-inline: auto; padding-inline: clamp(1rem, 4vw, 4rem); }
+.bar { min-height: 5rem; padding-block: .8rem; display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: .8rem 2rem; }
+.brand { display: inline-flex; align-items: center; gap: .65rem; text-decoration: none; color: var(--ink); font-weight: 730; font-size: 1.32rem; line-height: 1.1; }
+.brand small { display: block; color: var(--muted); font-size: .76rem; font-weight: 500; margin-bottom: .16rem; }
+.brand img { object-fit: contain; }
+main { padding-block: clamp(1.5rem,5vw,4.5rem); }
+a { color: var(--purple); text-underline-offset: .18em; }
+h1, h2 { line-height: 1.09; letter-spacing: -.045em; text-wrap: balance; }
+h1 { font-size: clamp(2.25rem,5vw,3.75rem); margin: .4rem 0 1.6rem; }
+h2 { font-size: clamp(1.4rem,2.4vw,1.85rem); margin: 0 0 1.2rem; }
+button, .button {
+  display: inline-flex; align-items: center; justify-content: center; gap: 1rem;
+  border: 1px solid transparent; border-radius: .65rem; padding: .75rem 1.35rem;
+  font: inherit; line-height: 1.4; font-weight: 650; cursor: pointer; text-decoration: none;
+  background: var(--purple); color: white;
+}
+button:hover, .button:hover { background: #522274; }
+:focus-visible { outline: 3px solid #894bac; outline-offset: 3px; }
+.intro {
+  position: relative; isolation: isolate; overflow: hidden; border-radius: 1.2rem;
+  padding: clamp(1.5rem, 4vw, 3.6rem); color: white; background: var(--plum);
+}
+.intro h1 { margin: 0; font-size: clamp(2.35rem,4.55vw,4.25rem); font-weight: 680; }
+.intro p { max-width: 31rem; margin: 1.25rem 0 0; color: #f0e3ef; line-height: 1.6; }
+.fold {
+  position: relative; height: clamp(6rem,12vw,10rem);
+  margin: 2.1rem -4rem -4rem 14%; transform: skewY(-8deg);
+}
+.fold::before, .fold::after {
+  content: ""; position: absolute; inset: 0; transform-origin: left center;
+  background: repeating-linear-gradient(90deg, #ff8357 0%, #ffb278 8.3%, #e76b42 8.4%, #b34836 16.66%);
+  clip-path: polygon(0 100%, 0 68%, 8.3% 50%, 16.66% 60%, 25% 42%, 33.33% 52%, 41.66% 34%, 50% 44%, 58.33% 26%, 66.66% 36%, 75% 18%, 83.33% 28%, 91.66% 10%, 100% 20%, 100% 100%);
+}
+.fold::before { transform: translate(-9%,-14%); filter: saturate(.75); opacity: .58; }
+.landing { min-height: 28rem; padding: clamp(1.65rem,5vw,4.5rem); }
+.landing p { max-width: 32rem; }
+.landing .button { margin-top: 1.8rem; background: #fff; color: var(--plum); }
+.landing .button:hover { background: #fff0e7; }
+.landing .fold { margin-left: 30%; }
+.splash {
+  position: fixed; inset: 0; margin: 0; width: 100%; height: 100%; max-width: none; max-height: none;
+  border: 0; padding: 1rem; background: var(--paper); color: var(--ink);
+}
+.splash[open] { display: grid; place-content: center; justify-items: center; }
+.splash::backdrop { background: var(--paper); }
+.splash-logo { position: relative; width: 7.5rem; aspect-ratio: 169/191; }
+.splash-logo span { position: absolute; inset: 0; background: url("./wave.png") 0 center / 600% 100% no-repeat; }
+.splash-logo span:nth-child(2) { background-position-x: 20%; }
+.splash-logo span:nth-child(3) { background-position-x: 40%; }
+.splash-logo span:nth-child(4) { background-position-x: 60%; }
+.splash-logo span:nth-child(5) { background-position-x: 80%; }
+.splash-logo span:nth-child(6) { background-position-x: 100%; }
+.splash strong { margin-top: 1rem; font-size: 1.45rem; letter-spacing: -.035em; }
+.splash small { color: var(--muted); }
+@media (max-width: 44rem) {
+  .bar { min-height: 4rem; }
+  .brand img { width: 2rem; height: auto; }
+  .intro h1 { font-size: clamp(2.1rem,8vw,3rem); }
+  .fold { height: 5.5rem; margin: .25rem -2rem -2rem 38%; }
+  .landing { min-height: auto; }
+  .landing .fold { margin-top: 2rem; }
+}

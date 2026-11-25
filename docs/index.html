@@ -4,27 +4,19 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>Единая служба ИТ-поддержки · Приоритет</title>
-  <style>
-    * { box-sizing: border-box; }
-    body { margin: 0; padding: clamp(1rem, 6vw, 5rem); color: #143d43; background: #edf4f1; font: 1rem/1.6 "Segoe UI", sans-serif; }
-    main { max-width: 48rem; margin: 4vh auto; overflow: hidden; border-radius: 1.2rem; background: white; box-shadow: 0 1rem 3rem #173e3910; }
-    header, section { padding: clamp(1.5rem, 5vw, 3.5rem); }
-    header { color: white; background: linear-gradient(125deg, #123c42, #175952); }
-    h1 { max-width: 13em; font-size: clamp(2.3rem, 6vw, 3.6rem); letter-spacing: -.04em; line-height: 1.1; margin: 1rem 0 0; }
-    p { margin: 0 0 1rem; }
-    a { color: #05695f; font-weight: 650; text-underline-offset: .2em; }
-    .cabinet { display: inline-block; padding: .7rem 1.3rem; border-radius: .45rem; color: white; background: #066960; text-decoration: none; }
-    .cabinet:hover { background: #104840; }
-    .cabinet:focus-visible { outline: 3px solid #326fb2; outline-offset: 3px; }
-  </style>
+  <link rel="icon" href="./brand/prioritet.png">
+  <link rel="stylesheet" href="./brand/theme.css">
+  <script src="./brand/intro.js" defer></script>
 </head>
 <body>
+  <header><div class="bar"><a class="brand" href="./"><img src="./brand/prioritet.png" width="41" height="46" alt=""><span><small>Центр образования</small>Приоритет</span></a></div></header>
   <main>
-    <header><span>Центр образования «Приоритет»</span><h1>Единая служба ИТ-поддержки</h1></header>
-    <section>
+    <div class="landing intro">
+      <h1>Единая служба<br>ИТ-поддержки</h1>
       <p>Педагог подаёт заявку и следит за её статусом. Исполнитель принимает обращение, назначает ответственного и отвечает педагогу.</p>
-      <p><a class="cabinet" href="https://prioritet-it-support.onrender.com/">Открыть кабинет</a></p>
-    </section>
+      <a class="button" href="https://prioritet-it-support.onrender.com/">Открыть кабинет <span aria-hidden="true">↗</span></a>
+      <div class="fold" aria-hidden="true"></div>
+    </div>
   </main>
 </body>
 </html>

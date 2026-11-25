@@ -13,7 +13,7 @@ export function layout(title, content, user) {
 
 export function authPage(register, message = '', login = '') {
   const title = register ? 'Регистрация педагога' : 'Вход в кабинет';
-  return layout(title, `<div class="auth"><div class="intro"><h1>Единая служба<br>ИТ-поддержки</h1><p>Войдите, чтобы подать заявку или продолжить работу с обращениями.</p></div>
+  return layout(title, `<div class="auth"><div class="intro"><h1>Единая служба<br>ИТ-поддержки</h1><p>Войдите, чтобы подать заявку или продолжить работу с обращениями.</p><div class="fold" aria-hidden="true"></div></div>
   <section class="card"><h2>${title}</h2>${errorText(message)}
   <form class="fields" method="post" action="${register ? '/register' : '/login'}">
   <label>Рабочая почта или телефон<input name="login" autocomplete="username" maxlength="254" required value="${esc(login)}"></label>

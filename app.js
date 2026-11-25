@@ -15,6 +15,14 @@ const sessionFlags = 'Path=/; HttpOnly; SameSite=Lax' + (publicOrigin ? '; Secur
 const deriveKey = promisify(scrypt);
 const css = await readFile(new URL('./public/style.css', import.meta.url));
 const queueScript = await readFile(new URL('./public/queue.js', import.meta.url));
+const brandAssets = new Map();
+for (const [name, type] of [
+  ['prioritet.png', 'image/png'], ['wave.png', 'image/png'],
+  ['intro.js', 'text/javascript; charset=utf-8'], ['theme.css', 'text/css; charset=utf-8']
+]) {
+  const content = await readFile(new URL('./docs/brand/' + name, import.meta.url));
+  brandAssets.set('/brand/' + name, { content, type });
+}
 const digest = input => createHash('sha256').update(input).digest('hex');
 
 function normalizeLogin(raw) {
@@ -56,6 +64,10 @@ async function handle(req, res) {
   const post = req.method === 'POST';
   if (post && req.headers.origin !== (publicOrigin?.origin ?? `http://${host}`)) return send(403, 'Обновите страницу и повторите отправку.');
   if (!post && !['GET', 'HEAD'].includes(req.method)) return send(405, 'Метод недоступен');
+  if (!post && brandAssets.has(path)) {
+    const { content, type } = brandAssets.get(path);
+    return send(200, content, type);
+  }
   if (!post && path === '/style.css') return send(200, css, 'text/css; charset=utf-8');
   if (!post && path === '/queue.js') return send(200,queueScript,'text/javascript; charset=utf-8');
   const key = /(?:^|;\s*)session=([a-f0-9]{64})(?:;|$)/.exec(req.headers.cookie || '')?.[1];
